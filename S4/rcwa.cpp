@@ -1638,7 +1638,7 @@ void GetLayerZIntegral(
 }
 
 
-void GetFieldAtPointByN(
+void GetFieldAtPointByG(
 	size_t n, // glist.n
 	const double *kx,
 	const double *ky,

@@ -1430,7 +1430,7 @@ static PyObject *S4Sim_GetFields(S4Sim *self, PyObject *args, PyObject *kwds){
 	);
 }
 
-static PyObject *S4Sim_GetFieldsByN(S4Sim *self, PyObject *args, PyObject *kwds){
+static PyObject *S4Sim_GetFieldsByG(S4Sim *self, PyObject *args, PyObject *kwds){
     int ret;
     double r[3];
     double *Efields, *Hfields;
@@ -1440,7 +1440,7 @@ static PyObject *S4Sim_GetFieldsByN(S4Sim *self, PyObject *args, PyObject *kwds)
     Efields = (double*)malloc(sizeof(double) *2*3 * n);
     Hfields = (double*)malloc(sizeof(double) *2*3 * n);
 
-	ret = Simulation_GetFieldByN(&(self->S), r, Efields, Hfields);
+	ret = Simulation_GetFieldByG(&(self->S), r, Efields, Hfields);
     ret = 0;
 
 	if(0 != ret){
@@ -1976,7 +1976,7 @@ static PyMethodDef S4Sim_methods[] = {
 	{"GetHField"				, (PyCFunction)S4Sim_GetHField, METH_VARARGS, PyDoc_STR("GetHField(x,y,z) -> (Tuple)")},
 	*/
 	{"GetFields"				, (PyCFunction)S4Sim_GetFields, METH_VARARGS, PyDoc_STR("GetFields(x,y,z) -> (Tuple,Tuple)")},
-	{"GetFieldsByN"				, (PyCFunction)S4Sim_GetFieldsByN, METH_VARARGS, PyDoc_STR("GetFieldsByN(x,y,z) -> (Tuple,Tuple)")},
+	{"GetFieldsByG"				, (PyCFunction)S4Sim_GetFieldsByG, METH_VARARGS, PyDoc_STR("GetFieldsByG(x,y,z) -> (Tuple,Tuple)")},
 	{"GetFieldsOnGrid"			, (PyCFunction)S4Sim_GetFieldsOnGrid, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("GetFieldsOnGrid(z,nsamples,format,filename) -> Tuple")},
 	{"GetSMatrixDeterminant"	, (PyCFunction)S4Sim_GetSMatrixDeterminant, METH_NOARGS, PyDoc_STR("GetSMatrixDeterminant() -> Tuple")},
 	{"GetSMatrix"			    , (PyCFunction)S4Sim_GetSMatrix, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("GetSMatrix(from,to) -> Tuple")},

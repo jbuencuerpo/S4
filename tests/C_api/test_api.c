@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
     Em = (double*)malloc(sizeof(double) *2*3 * N);
     Hm = (double*)malloc(sizeof(double) *2*3 * N);
 //
-    Simulation_GetFieldByN(S, r, Em, Hm);
+    Simulation_GetFieldByG(S, r, Em, Hm);
     Simulation_GetField(S, r, E, H);
 
     for (int i=0; i<N; i++){

@@ -2952,7 +2952,7 @@ int Simulation_GetSMatrix(Simulation *S, int from, int to, double *Md){
     return 0;
 }
 
-int Simulation_GetFieldByN(Simulation *S, const double r[3], double *fE, double *fH){
+int Simulation_GetFieldByG(Simulation *S, const double r[3], double *fE, double *fH){
 	S4_TRACE("> Simulation_GetField(S=%p, r=%p (%f,%f,%f), fE=%p, fH=%p)\n",
 		S, r, (NULL == r ? 0 : r[0]), (NULL == r ? 0 : r[1]), (NULL == r ? 0 : r[2]), fE, fH);
 	if(NULL == S){
@@ -3012,7 +3012,7 @@ int Simulation_GetFieldByN(Simulation *S, const double r[3], double *fE, double 
     efield = (std::complex<double>*)S4_malloc(sizeof(std::complex<double>)* 3 * n);
     hfield = (std::complex<double>*)S4_malloc(sizeof(std::complex<double>)* 3 * n);
 
-    GetFieldAtPointByN(
+    GetFieldAtPointByG(
         S->n_G, S->solution->kx, S->solution->ky, std::complex<double>(S->omega[0],S->omega[1]),
         Lbands->q, Lbands->kp, Lbands->phi, Lbands->Epsilon_inv, Lbands->epstype,
         ab, r, (NULL != fE ? efield : NULL) , (NULL != fH ? hfield : NULL), work);
