@@ -964,6 +964,42 @@ static PyObject *S4Sim_SetExcitationExterior(S4Sim *self, PyObject *args, PyObje
 	Py_RETURN_NONE;
 }
 
+static PyObject *S4Sim_SetExcitationDipole(S4Sim *self, PyObject *args, PyObject *kwds){
+	int ret;
+	static char *kwlist[] = { "Layer", "Kvector", "Position", "Moment", NULL };
+	const char *layerName;
+	double kvector[2]; //Only horizontal dipoles??
+	double position[2]; //Only 0 thickness layers???
+	Py_complex moment[3];
+    double momentum[6];
+
+    for (int i =0; i<3; i++){
+        moment[i].real = 0;
+        moment[i].imag = 0;
+    }
+
+	if(!PyArg_ParseTupleAndKeywords(args, kwds, "s(dd)(dd)(ddd):SetExcitationDipole",
+                                kwlist, &layerName,
+                                &kvector[0], &kvector[1], &position[0], &position[1],
+                                &moment[0], &moment[1], &moment[2])){ return NULL; }
+
+
+    for (int i =0; i<3; i++){
+        momentum[i] = moment[i].real;
+        momentum[2*i+1] = moment[i].imag;}
+       
+
+	/*ret = Simulation_MakeExcitationDipole(&(self->S), kvector, layerName, position, momentum);*/
+	ret = Simulation_MakeExcitationDipole(&(self->S), kvector, layerName, position, momentum);
+	if(0 != ret){
+		/*HandleSolutionErrorCode("SetExcitationDipole", ret);*/
+		return NULL;
+	}
+
+    
+	Py_RETURN_NONE;
+}
+
 static PyObject *S4Sim_SetExcitationPlanewave(S4Sim *self, PyObject *args, PyObject *kwds){
 	int ret;
 	static char *kwlist[] = { "IncidenceAngles", "sAmplitude", "pAmplitude", "Order", NULL };
@@ -1639,30 +1675,30 @@ static PyObject *S4Sim_GetSMatrix(S4Sim *self, PyObject *args, PyObject *kwds){
     // No idea
     static char *kwlist[] = {"from", "to", NULL};
 
-	if(!PyArg_ParseTupleAndKeywords(args, kwds, "ii:GetSMatrix", kwlist, &from, &to)){
+    if(!PyArg_ParseTupleAndKeywords(args, kwds, "ii:GetSMatrix", kwlist, &from, &to)){
     return NULL; }
 
-	if(-1 != to && to < from){ return NULL;}
+    if(-1 != to && to < from){ return NULL;}
 
     //Simulation *S;
     //S = &(self->S);
 
-	if(NULL == (&self->S)->solution){
-		int error = Simulation_InitSolution(&(self->S));
-		if(0 != error){
-			S4_TRACE("< Simulation_GetSMatrix (failed; Simulation_InitSolution returned %d)\n", error);
-			HandleSolutionErrorCode("InitSolution", error);
-			return NULL;}}
+    if(NULL == (&self->S)->solution){
+        int error = Simulation_InitSolution(&(self->S));
+        if(0 != error){
+            S4_TRACE("< Simulation_GetSMatrix (failed; Simulation_InitSolution returned %d)\n", error);
+            HandleSolutionErrorCode("InitSolution", error);
+            return NULL;}}
 
-	const size_t n4 = 4*(&self->S)->n_G;
+    const size_t n4 = 4*(&self->S)->n_G;
     double *M;
     M = (double*)malloc(sizeof(double)*n4*n4*2);
     
     ret = Simulation_GetSMatrix(&(self->S), from, to, M);
-	if(0 != ret){
-		//HandleSolutionErrorCode("GetSMatrix", ret);
-		return NULL;
-	}
+    if(0 != ret){
+        //HandleSolutionErrorCode("GetSMatrix", ret);
+        return NULL;
+    }
     PyObject *mi = PyTuple_New(n4);
     for (size_t i=0; i < n4; i++){
         PyObject *mj = PyTuple_New(n4);
@@ -1953,6 +1989,7 @@ static PyMethodDef S4Sim_methods[] = {
 	{"SetRegionEllipse"			, (PyCFunction)S4Sim_SetRegionEllipse, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetLayerPatternEllipse(layer,matname,center,angle,halfwidths) -> None")},
 	{"SetRegionRectangle"		, (PyCFunction)S4Sim_SetRegionRectangle, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetLayerPatternRectangle(layer,matname,center,angle,halfwidths) -> None")},
 	{"SetRegionPolygon"			, (PyCFunction)S4Sim_SetRegionPolygon, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetLayerPatternPolygon(layer,matname,center,angle,vertices) -> None")},
+	{"SetExcitationDipole"	, (PyCFunction)S4Sim_SetExcitationDipole, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetExcitationDipole(layer,Kvector,Position,Moment,AmplitudePhase) -> None")},
 	{"SetExcitationPlanewave"	, (PyCFunction)S4Sim_SetExcitationPlanewave, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetExcitationPlanewave(angles,s_amp,p_amp) -> None")},
 	{"SetExcitationExterior"	, (PyCFunction)S4Sim_SetExcitationExterior, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("SetExcitationExterior(Excitations) -> None")},
 	{"SetFrequency"				, (PyCFunction)S4Sim_SetFrequency, METH_VARARGS, PyDoc_STR("SetFrequency(freq) -> None")},
@@ -1979,7 +2016,7 @@ static PyMethodDef S4Sim_methods[] = {
 	{"GetFieldsByG"				, (PyCFunction)S4Sim_GetFieldsByG, METH_VARARGS, PyDoc_STR("GetFieldsByG(x,y,z) -> (Tuple,Tuple)")},
 	{"GetFieldsOnGrid"			, (PyCFunction)S4Sim_GetFieldsOnGrid, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("GetFieldsOnGrid(z,nsamples,format,filename) -> Tuple")},
 	{"GetSMatrixDeterminant"	, (PyCFunction)S4Sim_GetSMatrixDeterminant, METH_NOARGS, PyDoc_STR("GetSMatrixDeterminant() -> Tuple")},
-	{"GetSMatrix"			    , (PyCFunction)S4Sim_GetSMatrix, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("GetSMatrix(from,to) -> Tuple")},
+    {"GetSMatrix"			    , (PyCFunction)S4Sim_GetSMatrix, METH_VARARGS | METH_KEYWORDS, PyDoc_STR("GetSMatrix(from,to) -> Tuple")},
 	/*
 	{"GetDiffractionOrder"		, (PyCFunction)S4Sim_GetDiffractionOrder, METH_VARARGS, PyDoc_STR("GetDiffractionOrder(m,n) -> order")},
 	*/

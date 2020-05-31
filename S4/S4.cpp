@@ -1076,6 +1076,7 @@ int Simulation_ComputeLayerSolution(Simulation *S, Layer *L, LayerBands **layer_
 			bN, // bN
 			(*layer_solution)->ab);
 		S4_free(a0);
+    // Dipole 
 	}else if(1 == S->exc.type){
 		Layer *l[2];
 		int li;
@@ -1112,7 +1113,7 @@ int Simulation_ComputeLayerSolution(Simulation *S, Layer *L, LayerBands **layer_
 		// [ (omega^2 - Kappa_{l+1}) Phi_{l+1} q_{l+1}^{-1} [ 1 - f_{l+1} S_{21}(l+1,N) ,
 		//              (omega^2 - Kappa_l) Phi_l q_l^{-1} [ 1 - f_l S_{12}(0,l) ;
 		//   Phi_{l+1} [ 1 + f_{l+1} S_{21}(l+1,N) , -Phi_l [ 1 + f_l S_{12}(0,l)         ] [ a_{l+1} ; b_l ]
-		// == [ p_z ; p_par ]
+		// == [ p_z ; p_par G
 		//
 		// In code:
 		// [factorization] [RHS] == [pzp]
@@ -1122,6 +1123,7 @@ int Simulation_ComputeLayerSolution(Simulation *S, Layer *L, LayerBands **layer_
 		// Get S matrix portions first
 		Simulation_GetSMatrix(S, 0, li, work4);
 		RNP::TBLAS::CopyMatrix<'A'>(n2,n2, &work4[0+n2*n4],n4, work2,n2);
+        //It breaks here, the q vector it is not well defined?
 		Simulation_GetSMatrix(S, li+1, -1, work4);
 		// Make upper right
 		for(i = 0; i < n2; ++i){ // first scale work2 to make -f_l*S12(0,l)
@@ -2758,6 +2760,7 @@ int Simulation_MakeExcitationDipole(Simulation *S, const double k[2], const char
 		return 14;
 	}
 
+
 	Simulation_DestroySolution(S);
 	S->exc.type = 1;
 
@@ -2843,8 +2846,11 @@ void Simulation_SetExcitationType(Simulation *S, int type){
 	S4_TRACE("> Simulation_SetExcitationType(S=%p, type=%d\n", S, type);
 	if(1 == S->exc.type){
 		if(NULL != S->exc.layer){
-			free(S->exc.layer);
-		}
+			free(S->exc.layer);}
+        //if(NULL != S->exc.sub.dipole.pos){
+            //free(S->exc.sub.dipole.pos);}
+        //if(NULL != S->exc.sub.dipole.moment){
+            //free(S->exc.sub.dipole.moment);}
 	}else if(2 == S->exc.type){
 		if(NULL != S->exc.sub.exterior.Gindex1){ free(S->exc.sub.exterior.Gindex1); }
 		if(NULL != S->exc.sub.exterior.coeff){ free(S->exc.sub.exterior.coeff); }
@@ -2933,11 +2939,11 @@ int Simulation_GetSMatrix(Simulation *S, int from, int to, std::complex<double> 
 }
 
 
-//Pass to double for Python
+////Pass to double for Python
 int Simulation_GetSMatrix(Simulation *S, int from, int to, double *Md){
     int ret;
 
-	const size_t n4 = 4*S->n_G;
+    const size_t n4 = 4*S->n_G;
     std::complex<double> *M = (std::complex<double>*)S4_malloc(sizeof(std::complex<double>)*n4*n4);
     ret = Simulation_GetSMatrix(S, from, to, M);
     

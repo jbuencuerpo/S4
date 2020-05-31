@@ -33,8 +33,8 @@ LAPACK_LIB = -lopenblas
 #  or, if Fedora and/or fftw is version 3 but named fftw rather than fftw3
 #  FTW3_LIB = -lfftw 
 #  May need to link libraries properly as with blas and lapack above
-#FFTW3_INC =
-#FFTW3_LIB = -lfftw3
+FFTW3_INC =
+FFTW3_LIB = -lfftw3
 
 # Typically,
 #  PTHREAD_INC = -DHAVE_UNISTD_H
@@ -47,11 +47,11 @@ LAPACK_LIB = -lopenblas
 # Fedora: dnf install libsuitsparse-devel
 # Typically, if installed:
 #CHOLMOD_INC = -I/usr/include/suitesparse
-#CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
-#CHOLMOD_INC = -I/usr/include/suitesparse
+CHOLMOD_INC=
+CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
+CHOLMOD_INC = -I/usr/include/suitesparse
 #CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
 #CHOLMOD_LIB=
-#CHOLMOD_INC=
 
 # Specify the MPI library
 # For example, on Fedora: dnf  install openmpi-devel
@@ -113,7 +113,8 @@ endif
 
 LIBS = $(BLAS_LIB) $(LAPACK_LIB) $(FFTW3_LIB) $(PTHREAD_LIB) $(CHOLMOD_LIB) $(MPI_LIB)
 
-TESTBIN = $(OBJDIR)/tests/test_api.o
+TESTS =   $(OBJDIR)/tests/test_1.o\
+          $(OBJDIR)/tests/test_2.o
 
 #### Compilation targets
 
@@ -151,8 +152,8 @@ S4_LIBOBJS = \
 	#$(OBJDIR)/S4k/SpectrumSampler.o \
 	#$(OBJDIR)/S4k/convert.o
 
-TESTS = \
-	$(OBJDIR)/tests/test_api.o
+#TESTS = \
+	#$(OBJDIR)/tests/test_api.o
 
 #S4r_LIBOBJS = \
 	#$(OBJDIR)/S4r/Material.o \
@@ -177,7 +178,9 @@ endif
 $(S4_LIBNAME): objdir $(S4_LIBOBJS)
 	$(AR) crvs $@ $(S4_LIBOBJS)
 
-$(OBJDIR)/tests/test_api.o: tests/C_api/test_api.c objdir $(S4_LIBOBJS) $(S4_LIBNAME)
+$(OBJDIR)/tests/test_1.o: tests/C_api/test_1.c objdir $(S4_LIBOBJS) $(S4_LIBNAME)
+		$(CXX) -g $(CFLAGS) $(CPPFLAGS) $< -o $@ $(S4_LIBNAME) $(LIBS) 
+$(OBJDIR)/tests/test_2.o: tests/C_api/test_2.c objdir $(S4_LIBOBJS) $(S4_LIBNAME)
 		$(CXX) -g $(CFLAGS) $(CPPFLAGS) $< -o $@ $(S4_LIBNAME) $(LIBS) 
 #$(S4r_LIBNAME): objdir $(S4r_LIBOBJS)
 	#$(AR) crvs $@ $(S4r_LIBOBJS)

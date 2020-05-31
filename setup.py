@@ -8,7 +8,8 @@ import platform
 
 if platform.system() == 'Linux':
     libs = ['S4', 'stdc++']
-    libs.extend([lib[2::] for lib in '-lblas -llapack '.split()])
+    libs.extend([lib[2::] for lib in '-lopenblas -lcholmod -lamd -lcolamd -lcamd -lccolamd'.split()])
+
     extra_link_args = ['./build/libS4.a']
     Makefile='Makefile' 
 
@@ -32,7 +33,7 @@ S4module = setuptools.extension.Extension('S4B',
                       library_dirs = ['./build'],
                       # extra_link_args = ['./build/libS4.a'],
                       extra_link_args = extra_link_args,
-                      extra_compile_args = ['-std=gnu99', '-g'],)
+                      extra_compile_args = ['-std=gnu99', '-O0'],)
 
 S4module.Makefile=Makefile
 
@@ -97,6 +98,7 @@ class MakefileClean(clean):
 setuptools.setup(name = 'S4B',
 	version = '1.1.2',
 	description = "Fork Stanford Stratified Structure Solver (S4B): Fourier Modal Method",
+        # install_requires=['fftw3', 'openblas', 'suitesparse'],
         cmdclass = {'build_ext': alt_build_ext, 'clean':MakefileClean},
 	ext_modules = [S4module]
 )
