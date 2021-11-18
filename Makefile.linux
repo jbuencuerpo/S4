@@ -23,8 +23,8 @@ LAPACK_LIB = -llapack
 # Recommended: build lua in the current directory, and link against this local version
 # LUA_INC = -I./lua-5.2.4/install/include
 # LUA_LIB = -L./lua-5.2.4/install/lib -llua -ldl -lm
-LUA_INC = -I./lua-5.2.4/install/include
-LUA_LIB = -L./lua-5.2.4/install/lib -llua -ldl -lm
+#LUA_INC = -I./lua-5.2.4/install/include
+#LUA_LIB = -L./lua-5.2.4/install/lib -llua -ldl -lm
 
 # OPTIONAL
 # Typically if installed,
@@ -49,9 +49,10 @@ PTHREAD_LIB = -lpthread
 #CHOLMOD_INC = -I/usr/include/suitesparse
 #CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
 #CHOLMOD_INC = -I/usr/include/suitesparse
-#CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
-CHOLMOD_LIB=
-CHOLMOD_INC=
+CHOLMOD_INC= -I"${CONDA_PREFIX}"/include 
+CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
+#CHOLMOD_LIB=
+#CHOLMOD_INC=
 
 # Specify the MPI library
 # For example, on Fedora: dnf  install openmpi-devel

@@ -1,3 +1,6 @@
 build/
 *.swp
 *.pyc
+
+S4.egg-info
+S4.cpython-310-x86_64-linux-gnu.so
