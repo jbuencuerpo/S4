@@ -961,6 +961,9 @@ int Simulation_ComputeLayerSolution(Simulation *S, Layer *L, LayerBands **layer_
 		return -1;
 	}
 
+    // JB:Maybe is good to check if it can be decomposed for calculating
+    // JB:variable thickness same eigen-values, break this in two steps for calculating thickness?
+
 	// Make arrays of q, kp, and phi
 	double *lthick = (double*)S4_malloc(sizeof(double)*layer_count);
 	int *lepstype = (int*)S4_malloc(sizeof(int)*layer_count);
@@ -987,7 +990,6 @@ int Simulation_ComputeLayerSolution(Simulation *S, Layer *L, LayerBands **layer_
 		lkp [i] = Lbands[refi]->kp;
 		lphi[i] = Lbands[refi]->phi;
 	}
-
 	// Compose the RCWA solution
 	int error = 0;
 	if(0 == S->exc.type){

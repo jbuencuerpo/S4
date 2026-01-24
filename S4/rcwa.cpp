@@ -324,37 +324,12 @@ void SolveLayerEigensystem(
 ){
 	const size_t n2 = 2*n;
 	
-//#ifdef HAVE_LAPACK
-	//bool isreal = (n > 10);
-	//for(size_t j = 0; j < n && isreal; ++j){
-		//for(size_t i = 0; i < n; ++i){
-			//if(0 != Epsilon_inv[i+j*n].imag()){
-				//isreal = false;
-				//break;
-			//}
-		//}
-	//}
-	//for(size_t j = 0; j < n2 && isreal; ++j){
-		//for(size_t i = 0; i < n2; ++i){
-			//if(0 != Epsilon2[i+j*n2].imag()){
-				//isreal = false;
-				//break;
-			//}
-		//}
-	//}
-	////if(isreal && 0 == omega.imag() && EPSILON2_TYPE_FULL == epstype){
-		////SolveLayerEigensystem_real(
-			////omega.real(), n, kx, ky, Epsilon_inv, Epsilon2,
-			////q, kp, phi, work_, rwork_, lwork
-		////);
-		////return;
-	////}
-//#endif
-
 	if((size_t)-1 == lwork){
 		double dum;
-		RNP::Eigensystem(n2, NULL, n2, q, NULL, 1, phi, n2, work_, &dum, lwork);
-		work_[0] += n2*n2;
+		RNP::Eigensystem(n2, NULL, n2, q, NULL, 1, phi, n2, work_, NULL, lwork);
+		//work_[0] += n2*n2;
+        //work_[0] = double(2*n2); //M.P.
+        work_[0] += n2*n2;
 		return;
 	}else if(0 == lwork){
 		lwork = n2*n2+2*n2;
@@ -364,7 +339,10 @@ void SolveLayerEigensystem(
 	size_t eigenlwork;
 	if(NULL == work_ || lwork < n2*n2+2*n2){
 		lwork = (size_t)-1;
+        // Trying to fix segfault following kwrobert & mkl fix
+		double dum2;
 		RNP::Eigensystem(n2, NULL, n2, q, NULL, 1, phi, n2, q, NULL, lwork);
+        //q[0] = (double)(2*n2); //M.P
 		eigenlwork = (size_t)q[0].real();
 		work = (std::complex<double>*)rcwa_malloc(sizeof(std::complex<double>)*(eigenlwork + n2*n2));
 	}else{

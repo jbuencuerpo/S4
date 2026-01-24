@@ -90,16 +90,18 @@ inline int Eigensystem(size_t n,
 	if(vr != NULL){ jobvr[0] = 'V'; }
 	integer info;
 
-	if((size_t)-1 == lwork_){
-		RNP_FORTRAN_NAME(zgeev,ZGEEV)(jobvl, jobvr, n, a, lda, eval, vl, ldvl, vr, ldvr, work_, -1, rwork_, &info);
-		return 0;
-	}
-	
+    // avoid segfault passing NULL rwork
 	std::complex<double> *work = work_;
 	double *rwork = rwork_;
 	if(NULL == rwork_){
 		rwork = new double[2*n];
 	}
+
+	if((size_t)-1 == lwork_){
+		RNP_FORTRAN_NAME(zgeev,ZGEEV)(jobvl, jobvr, n, a, lda, eval, vl, ldvl, vr, ldvr, work_, -1, rwork, &info);
+		return 0;
+	}
+	
 	if(0 == lwork_){ lwork_ = 2*n; }
 	integer lwork = lwork_;
 	if(NULL == work_ || lwork < (integer)(2*n)){
