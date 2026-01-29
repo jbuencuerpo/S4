@@ -34,7 +34,7 @@ LAPACK_LIB = -lopenblas
 #  FTW3_LIB = -lfftw 
 #  May need to link libraries properly as with blas and lapack above
 FFTW3_INC =
-FFTW3_LIB = -lfftw
+FFTW3_LIB = -lfftw3
 
 # Typically,
 #  PTHREAD_INC = -DHAVE_UNISTD_H
@@ -46,11 +46,11 @@ FFTW3_LIB = -lfftw
 # If not installed:
 # Fedora: dnf install libsuitsparse-devel
 # Typically, if installed:
-CHOLMOD_INC= -I${CONDA_PREFIX}/include
-# CHOLMOD_INC = 
-CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
+# CHOLMOD_INC= -I${CONDA_PREFIX}/include
 #CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
-#CHOLMOD_LIB=
+#CHOLMOD_LIB = -lcholmod -lamd -lcolamd -lcamd -lccolamd
+CHOLMOD_INC = 
+CHOLMOD_LIB=
 
 # Specify the MPI library
 # For example, on Fedora: dnf  install openmpi-devel
@@ -98,9 +98,9 @@ ifdef FFTW3_LIB
 CPPFLAGS += -DHAVE_FFTW3 $(FFTW3_INC)
 endif
 
-ifdef PTHREAD_LIB
-CPPFLAGS += -DHAVE_LIBPTHREAD $(PTHREAD_INC)
-endif
+#ifdef PTHREAD_LIB
+#CPPFLAGS += -DHAVE_LIBPTHREAD $(PTHREAD_INC)
+#endif
 
 ifdef CHOLMOD_LIB
 CPPFLAGS += -DHAVE_LIBCHOLMOD $(CHOLMOD_INC)

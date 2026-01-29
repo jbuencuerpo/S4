@@ -325,7 +325,7 @@ void SolveLayerEigensystem(
 	const size_t n2 = 2*n;
 	
 	if((size_t)-1 == lwork){
-		double dum;
+		//double dum;
 		RNP::Eigensystem(n2, NULL, n2, q, NULL, 1, phi, n2, work_, NULL, lwork);
 		//work_[0] += n2*n2;
         //work_[0] = double(2*n2); //M.P.
@@ -340,7 +340,7 @@ void SolveLayerEigensystem(
 	if(NULL == work_ || lwork < n2*n2+2*n2){
 		lwork = (size_t)-1;
         // Trying to fix segfault following kwrobert & mkl fix
-		double dum2;
+		//double dum2;
 		RNP::Eigensystem(n2, NULL, n2, q, NULL, 1, phi, n2, q, NULL, lwork);
         //q[0] = (double)(2*n2); //M.P
 		eigenlwork = (size_t)q[0].real();
