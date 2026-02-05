@@ -7,9 +7,10 @@ import os, subprocess
 import platform
 
 if platform.system() == 'Linux':
+    #libs = ['S4', 'stdc++']
     libs = ['S4', 'stdc++']
-    libs.extend([lib[2::] for lib in '-lopenblas -lcholmod -lamd -lcolamd -lcamd -lccolamd'.split()])
-
+    # libs.extend([lib[2::] for lib in '-lopenblas -lfftw3 -lcholmod -lamd -lcolamd -lcamd -lccolamd '.split()])
+    libs.extend([lib[2::] for lib in '-lopenblas -lfftw3 '.split()])
     extra_link_args = ['./build/libS4.a']
     Makefile='Makefile' 
 
@@ -33,7 +34,8 @@ S4module = setuptools.extension.Extension('S4B',
                       library_dirs = ['./build'],
                       # extra_link_args = ['./build/libS4.a'],
                       extra_link_args = extra_link_args,
-                      extra_compile_args = ['-std=gnu99', '-O0'],)
+                      # extra_compile_args = ['-std=gnu99', '-O3', '-g'],)
+                      extra_compile_args = ['-std=gnu99', '-O0', '-g'],)
 
 S4module.Makefile=Makefile
 
