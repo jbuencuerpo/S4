@@ -34,8 +34,8 @@ S4module = setuptools.extension.Extension('S4B',
                       library_dirs = ['./build'],
                       # extra_link_args = ['./build/libS4.a'],
                       extra_link_args = extra_link_args,
-                      # extra_compile_args = ['-std=gnu99', '-O3', '-g'],)
-                      extra_compile_args = ['-std=gnu99', '-O0', '-g'],)
+                      extra_compile_args = ['-std=gnu99', '-O3', '-g'],)
+                      #extra_compile_args = ['-std=gnu99', '-O0', '-g'],)
 
 S4module.Makefile=Makefile
 
